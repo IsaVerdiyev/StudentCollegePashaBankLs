@@ -1,8 +1,9 @@
 package az.pashabank.ls.msstudent.services;
 
 import az.pashabank.ls.msstudent.entities.Student;
+import az.pashabank.ls.msstudent.interfaces.StudentRepository;
 import az.pashabank.ls.msstudent.interfaces.StudentService;
-import az.pashabank.ls.msstudent.repositories.StudentRepository;
+import az.pashabank.ls.msstudent.repositories.StudentH2Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
