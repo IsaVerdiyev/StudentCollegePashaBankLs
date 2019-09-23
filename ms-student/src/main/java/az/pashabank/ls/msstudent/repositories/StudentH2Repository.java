@@ -9,7 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.stream.Stream;
 
-@Repository
+
+
 public interface StudentH2Repository extends JpaRepository<Student, Long>, StudentRepository {
 
     @Query("select s from Student s")
