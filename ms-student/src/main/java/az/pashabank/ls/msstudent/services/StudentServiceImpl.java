@@ -1,9 +1,9 @@
 package az.pashabank.ls.msstudent.services;
 
-import az.pashabank.ls.msstudent.entities.Student;
+import az.pashabank.ls.msstudent.models.CollegeDto;
+import az.pashabank.ls.msstudent.models.StudentDto;
 import az.pashabank.ls.msstudent.interfaces.StudentRepository;
 import az.pashabank.ls.msstudent.interfaces.StudentService;
-import az.pashabank.ls.msstudent.repositories.StudentH2Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -23,46 +24,64 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private CollegeClient collegeClient;
+
+    public StudentServiceImpl(StudentRepository studentRepository, CollegeClient collegeClient){
+        this.studentRepository = studentRepository;
+        this.collegeClient = collegeClient;
+    }
+
     @Override
-    public List<Student> recieveAllStudents() {
+    public List<StudentDto> recieveAllStudents() {
         return studentRepository.findAll();
     }
 
     @Override
-    public Student recieveStudentById(Long studentId) {
-        Student student = studentRepository.findById(studentId).get();
-        return student;
+    public StudentDto recieveStudentById(Long studentId) {
+        StudentDto studentDto = studentRepository.findById(studentId).get();
+        return studentDto;
     }
 
     @Override
-    public Student addStudent(Student student) {
+    public StudentDto addStudent(StudentDto studentDto) {
         try {
-            Student foundStudent = recieveStudentById(student.getId());
+            StudentDto foundStudentDto = recieveStudentById(studentDto.getId());
             logger.warn("Entity already exists");
-            throw new EntityExistsException(foundStudent.getId().toString());
+            throw new EntityExistsException(foundStudentDto.getId().toString());
         } catch (EntityNotFoundException | InvalidDataAccessApiUsageException | JpaObjectRetrievalFailureException ex) {
             logger.warn(ex.getClass() + ":  " + ex.getMessage());
-            Student addedStudent;
+            StudentDto addedStudentDto;
             try {
-                return studentRepository.save(student);
+                return studentRepository.save(studentDto);
             }catch(Exception ex1){
                 logger.warn(ex1.getClass().getName() + ": " + ex1.getMessage());
                 throw ex1;
             }
-
         }
-
-
     }
 
     @Override
-    public Student updateStudent(Student student) {
-        Student foundStudent = recieveStudentById(student.getId());
-        return studentRepository.save(student);
+    public StudentDto updateStudent(StudentDto studentDto) {
+        StudentDto foundStudentDto = recieveStudentById(studentDto.getId());
+        return studentRepository.save(studentDto);
     }
 
     @Override
     public void deleteStudentById(Long studentId) {
         studentRepository.deleteById(studentId);
+    }
+
+    @Override
+    public List<StudentDto> recieveStudentsByLocation(String city) {
+        List<CollegeDto> colleges = collegeClient.getColleges();
+        List<Long> foundCollegeCityIds = colleges.stream()
+                .filter(c -> c.getCity().equals(city))
+                .map(c -> c.getId())
+                .collect(Collectors.toList());
+        List<StudentDto> students  = recieveAllStudents();
+        return students.stream()
+                .filter(s -> foundCollegeCityIds.contains(s.getCollegeId()))
+                .collect(Collectors.toList());
     }
 }

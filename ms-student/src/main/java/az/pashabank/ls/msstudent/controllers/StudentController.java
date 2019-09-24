@@ -1,6 +1,6 @@
 package az.pashabank.ls.msstudent.controllers;
 
-import az.pashabank.ls.msstudent.entities.Student;
+import az.pashabank.ls.msstudent.models.StudentDto;
 import az.pashabank.ls.msstudent.interfaces.StudentService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,24 +14,24 @@ public class StudentController {
     private StudentService studentService;
 
     @GetMapping
-    public List<Student> get(){
+    public List<StudentDto> get(){
         return studentService.recieveAllStudents();
     }
 
     @GetMapping("/{id}")
-    public Student get(@PathVariable("id") Long id){
-        Student student = studentService.recieveStudentById(id);
-        return student;
+    public StudentDto get(@PathVariable("id") Long id){
+        StudentDto studentDto = studentService.recieveStudentById(id);
+        return studentDto;
     }
 
     @PostMapping
-    public Student post(@RequestBody Student student){
-        return studentService.addStudent(student);
+    public StudentDto post(@RequestBody StudentDto studentDto){
+        return studentService.addStudent(studentDto);
     }
 
     @PutMapping
-    public Student put(@RequestBody Student student){
-        return studentService.updateStudent(student);
+    public StudentDto put(@RequestBody StudentDto studentDto){
+        return studentService.updateStudent(studentDto);
     }
 
     @DeleteMapping("/{id}")
@@ -39,4 +39,8 @@ public class StudentController {
         studentService.deleteStudentById(id);
     }
 
+    @GetMapping(params = {"city"})
+    public List<StudentDto> getStudentsByCity(@RequestParam String city){
+        return studentService.recieveStudentsByLocation(city);
+    }
 }

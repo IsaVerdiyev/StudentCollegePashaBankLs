@@ -1,17 +1,19 @@
 package az.pashabank.ls.msstudent.interfaces;
 
-import az.pashabank.ls.msstudent.entities.Student;
+import az.pashabank.ls.msstudent.models.StudentDto;
 
 import java.util.List;
 
 public interface StudentService {
-    List<Student> recieveAllStudents();
+    List<StudentDto> recieveAllStudents();
 
-    Student recieveStudentById(Long studentId);
+    StudentDto recieveStudentById(Long studentId);
 
-    Student addStudent(Student student);
+    StudentDto addStudent(StudentDto studentDto);
 
-    Student updateStudent(Student student);
+    StudentDto updateStudent(StudentDto studentDto);
 
     void deleteStudentById(Long studentId);
+
+    List<StudentDto> recieveStudentsByLocation(String city);
 }
