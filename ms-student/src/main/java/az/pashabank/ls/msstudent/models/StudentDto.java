@@ -1,4 +1,4 @@
-package az.pashabank.ls.msstudent.entities;
+package az.pashabank.ls.msstudent.models;
 
 import lombok.*;
 
@@ -13,7 +13,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Student {
+public class StudentDto {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private  Long id;
